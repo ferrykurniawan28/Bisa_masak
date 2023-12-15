@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "475666154233",
+    "project_id": "projectbisamasak",
+    "storage_bucket": "projectbisamasak.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:475666154233:android:d57530af069e19bbb09828",
+        "android_client_info": {
+          "package_name": "com.example.bisa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBleDUgqz4NfhMPMJJnwjEakI2E9mcQbr4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:475666154233:android:7420f74c747ad4fbb09828",
+        "android_client_info": {
+          "package_name": "com.example.bisamasak"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBleDUgqz4NfhMPMJJnwjEakI2E9mcQbr4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:475666154233:android:0f631bfd1e26181db09828",
+        "android_client_info": {
+          "package_name": "com.example.projecttest"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBleDUgqz4NfhMPMJJnwjEakI2E9mcQbr4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

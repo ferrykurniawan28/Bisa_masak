@@ -271,12 +271,12 @@ class _MenuScreenState extends State<MenuScreen> {
                           ),
                         ),
                         const SizedBox(height: 20.0),
-                        ElevatedButton(
-                          onPressed: () async {
-                            debugPrint(imageUrl);
-                          },
-                          child: const Text('Print Data'),
-                        ),
+                        // ElevatedButton(
+                        //   onPressed: () async {
+                        //     debugPrint(imageUrl);
+                        //   },
+                        //   child: const Text('Print Data'),
+                        // ),
                       ],
                     ),
                   ),

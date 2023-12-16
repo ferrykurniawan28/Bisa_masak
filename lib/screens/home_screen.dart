@@ -1,12 +1,16 @@
 import 'package:bisa/firestore_dataUser.dart';
 import 'package:bisa/screens/login.dart';
 import 'package:bisa/screens/watchlist_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'option_screen.dart';
 import '../widgets/keranjang_bahan.dart';
+
+final db = FirebaseFirestore.instance;
+final _auth = FirebaseAuth.instance;
 
 class HomeScreen extends StatefulWidget {
   final int index;
@@ -18,13 +22,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<String> cartItems = []; // Initialize an empty list
+  List<String> cartItems = [];
 
   @override
   void initState() {
     super.initState();
-    // Fetch cart items from Firestore when the screen is initialized
-    Firestore_Datasource().getCartItems().then((items) {
+    // Listen for changes in cart items
+    Firestore_Datasource().cartItemsStream.listen((items) {
       setState(() {
         cartItems = items;
       });
@@ -37,14 +41,15 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         actions: [
           IconButton(
-              onPressed: () {
-                FirebaseAuth.instance.signOut();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                );
-              },
-              icon: const Icon(Icons.logout))
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+              );
+            },
+            icon: const Icon(Icons.logout),
+          )
         ],
         automaticallyImplyLeading: false,
       ),
@@ -76,34 +81,36 @@ class _HomeScreenState extends State<HomeScreen> {
             shape: BoxShape.circle,
             color: Colors.white,
           ),
-          child: Stack(children: [
-            IconButton(
-              icon: const Icon(Icons.shopping_cart),
-              onPressed: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CartScreen(),
-                  ),
-                );
+          child: Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.shopping_cart),
+                onPressed: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CartScreen(),
+                    ),
+                  );
 
-                if (result != null) {
-                  // Handle the result if needed
-                }
-              },
-            ),
-            Positioned(
-              right: 0,
-              child: CircleAvatar(
-                radius: 10,
-                backgroundColor: Colors.red,
-                child: Text(
-                  cartItems.length.toString(),
-                  style: const TextStyle(fontSize: 12),
+                  if (result != null) {
+                    // Handle the result if needed
+                  }
+                },
+              ),
+              Positioned(
+                right: 0,
+                child: CircleAvatar(
+                  radius: 10,
+                  backgroundColor: Colors.red,
+                  child: Text(
+                    cartItems.length.toString(),
+                    style: const TextStyle(fontSize: 12),
+                  ),
                 ),
               ),
-            ),
-          ]),
+            ],
+          ),
         ),
       ],
     );
@@ -118,8 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 20.0),
           _buildOptionButton(context, 'Mulai Memasak', OptionScreen()),
           const SizedBox(height: 10),
-          _buildOptionButton(
-              context, 'Watchlist Resep', WatchListScreen(index: widget.index)),
+          _buildOptionButton(context, 'Watchlist Resep', WatchListScreen()),
         ],
       ),
     );
@@ -167,3 +173,25 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
+
+  // Future<void> fetchCartItems() async {
+  //   try {
+  //     DocumentSnapshot watchlistSnapshot = await db
+  //         .collection('users')
+  //         .doc(_auth.currentUser!.uid)
+  //         .collection('watchlist')
+  //         .doc(_auth.currentUser!.uid)
+  //         .get();
+
+  //     List<String> items = await Firestore_Datasource().getCartItems();
+
+  //     setState(() {
+  //       cartItems = items;
+  //     });
+  //   } catch (e) {
+  //     // Handle the error
+  //     print('Error fetching cart items: $e');
+  //   }
+  // }
+

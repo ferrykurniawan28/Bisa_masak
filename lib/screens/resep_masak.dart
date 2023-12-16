@@ -20,17 +20,6 @@ class _ResepMasakanScreenState extends State<ResepMasakanScreen> {
   Map<String, dynamic>? data;
   List<dynamic>? resep;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   // Fetch cart items from Firestore when the screen is initialized
-  //   Firestore_Datasource().getCartItems().then((items) {
-  //     setState(() {
-  //       selectedItems = items;
-  //     });
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,7 +82,6 @@ class _ResepMasakanScreenState extends State<ResepMasakanScreen> {
             data = snapshot.data!.data() as Map<String, dynamic>;
 
             // Extract data
-            // String nama = data!['nama'].toString();
             resep = List<String>.from(data!['resep'] ?? []);
             return Column(
               children: [
@@ -108,10 +96,10 @@ class _ResepMasakanScreenState extends State<ResepMasakanScreen> {
                             trailing: const Icon(Icons.add),
                             onTap: () {
                               setState(() {
-                                if (!selectedItems.contains(resep?[index])) {
-                                  selectedItems.add(resep?[index]);
-                                  Firestore_Datasource().AddCart(selectedItems);
-                                }
+                                // Use a Set for selectedItems
+                                selectedItems.add(resep?[index]);
+                                Firestore_Datasource()
+                                    .AddCart(selectedItems.toList());
                               });
                             },
                           ),

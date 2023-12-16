@@ -19,6 +19,69 @@ class Firestore_Datasource {
     }
   }
 
+  Future<void> addWatchlist(List<int> index) async {
+    try {
+      DocumentReference userDocRef = _firestore
+          .collection('users')
+          .doc(_auth.currentUser!.uid)
+          .collection('watchlist')
+          .doc(_auth.currentUser!.uid);
+
+      // Update the watchlist field in Firestore
+      await userDocRef.set({
+        'id': _auth.currentUser!.uid,
+        'watchlist': index,
+      });
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  Future<void> removeFromWatchlist(int index) async {
+    try {
+      // Get the current watchlist from Firestore
+      DocumentReference userDocRef = _firestore
+          .collection('users')
+          .doc(_auth.currentUser!.uid)
+          .collection('watchlist')
+          .doc(_auth.currentUser!.uid);
+
+      DocumentSnapshot userDoc = await userDocRef.get();
+
+      // Check if the document exists
+      if (userDoc.exists) {
+        // Get the current watchlist array
+        List<int> currentWatchlist =
+            List<int>.from(userDoc.get('watchlist') as List<dynamic>? ?? []);
+
+        // Remove the dismissed item from the watchlist
+        currentWatchlist.remove(index);
+
+        // Update the watchlist field in Firestore
+        await userDocRef.update({
+          'watchlist': currentWatchlist,
+        });
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  Stream<List<String>> get cartItemsStream {
+    return _firestore
+        .collection('users')
+        .doc(_auth.currentUser!.uid)
+        .collection('notes')
+        .doc(_auth.currentUser!.uid)
+        .snapshots()
+        .map((snapshot) {
+      // Get the cart items from the snapshot
+      List<String> cartItems =
+          List<String>.from(snapshot.get('cart') as List<dynamic>? ?? []);
+      return cartItems;
+    });
+  }
+
   Future<bool> AddCart(List<String> newCart) async {
     try {
       // Get the current cart from Firestore
@@ -36,12 +99,15 @@ class Firestore_Datasource {
         List<String> currentCart =
             List<String>.from(userDoc.get('cart') as List<dynamic>? ?? []);
 
-        // Add the new items to the current cart
-        currentCart.addAll(newCart);
+        // Use a set to ensure unique items
+        Set<String> uniqueItems = {...currentCart, ...newCart};
+
+        // Convert back to list
+        List<String> updatedCart = uniqueItems.toList();
 
         // Update the cart field in Firestore
         await userDocRef.update({
-          'cart': currentCart,
+          'cart': updatedCart,
         });
 
         return true;
@@ -75,6 +141,36 @@ class Firestore_Datasource {
     } catch (e) {
       print(e);
       return true;
+    }
+  }
+
+  Future<List<int>> getWatchlistItems() async {
+    try {
+      // Get the current cart from Firestore
+      DocumentSnapshot userDoc = await _firestore
+          .collection('users')
+          .doc(_auth.currentUser!.uid)
+          .collection('watchlist')
+          .doc(_auth.currentUser!.uid)
+          .get();
+
+      // Check if the document exists
+      if (userDoc.exists) {
+        // Get the data as a Map<String, dynamic>
+        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+
+        // Access the 'cart' field and cast it to List<String>
+        List<int> currentWatchlist =
+            List<int>.from(userData['watchlist'] as List<dynamic>);
+
+        return currentWatchlist;
+      } else {
+        print('User document does not exist');
+        return []; // Return an empty list if the document does not exist
+      }
+    } catch (e) {
+      print(e);
+      return []; // Return an empty list if there's an error
     }
   }
 
